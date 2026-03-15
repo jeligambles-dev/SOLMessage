@@ -4,6 +4,10 @@ import { useState } from "react";
 import { shortenAddress } from "@/lib/solana";
 import { getProfile } from "@/lib/profiles";
 
+// ========== UPDATE THIS WITH YOUR CONTRACT ADDRESS ==========
+const CONTRACT_ADDRESS = "TBA";
+// =============================================================
+
 interface SidebarProps {
   activeTab: string;
   onTabChange: (tab: string) => void;
@@ -23,6 +27,7 @@ export default function Sidebar({
 }: SidebarProps) {
   const isConnected = !!publicKey;
   const [addressCopied, setAddressCopied] = useState(false);
+  const [caCopied, setCaCopied] = useState(false);
 
   function copyAddress() {
     if (!publicKey) return;
@@ -50,6 +55,27 @@ export default function Sidebar({
             <p className="text-xs text-[#8a8aa0]">Send SOL + Messages</p>
           </div>
         </div>
+      </div>
+
+      {/* CA */}
+      <div className="px-4 py-3 border-b border-[#2a2a3e]">
+        <p className="text-[10px] text-[#8a8aa0] uppercase tracking-wider mb-1">CA</p>
+        <button
+          onClick={() => {
+            navigator.clipboard.writeText(CONTRACT_ADDRESS);
+            setCaCopied(true);
+            setTimeout(() => setCaCopied(false), 2000);
+          }}
+          className="w-full text-left bg-[#0e0e12] border border-[#2a2a3e] hover:border-[#ab9ff2] rounded-lg px-3 py-2 transition-colors group"
+        >
+          {caCopied ? (
+            <span className="text-xs text-[#14f195]">Copied!</span>
+          ) : (
+            <p className="text-xs text-[#ab9ff2] font-mono truncate group-hover:text-white transition-colors">
+              {CONTRACT_ADDRESS === "TBA" ? "TBA" : CONTRACT_ADDRESS}
+            </p>
+          )}
+        </button>
       </div>
 
       {/* Navigation */}
