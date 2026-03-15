@@ -2,15 +2,15 @@ import NextAuth from "next-auth";
 import Twitter from "next-auth/providers/twitter";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  trustHost: true,
   providers: [
     Twitter({
-      clientId: process.env.AUTH_TWITTER_ID,
-      clientSecret: process.env.AUTH_TWITTER_SECRET,
+      clientId: process.env.AUTH_TWITTER_ID!,
+      clientSecret: process.env.AUTH_TWITTER_SECRET!,
     }),
   ],
   callbacks: {
     async jwt({ token, profile }) {
-      // Store Twitter data in the JWT token
       if (profile) {
         token.twitterHandle = (profile as { data?: { username?: string } }).data?.username || "";
         token.twitterName = (profile as { data?: { name?: string } }).data?.name || "";
@@ -19,7 +19,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return token;
     },
     async session({ session, token }) {
-      // Expose Twitter data on the session
       if (session.user) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const user = session.user as any;
@@ -30,4 +29,5 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return session;
     },
   },
+  debug: process.env.NODE_ENV === "development",
 });
